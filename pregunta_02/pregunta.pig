@@ -12,3 +12,7 @@ $ pig -x local -f pregunta.pig
 
      >>> Escriba el codigo del mapper a partir de este punto <<<
 */
+-- carga de datos desde la carpeta local
+data = LOAD 'data.tsv' AS ( col1:chararray, col2:chararray, col3:int);
+SR = ORDER data BY col1 ASC, col3 ASC;
+STORE SR INTO 'output' USING PigStorage(',');
