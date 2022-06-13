@@ -14,3 +14,11 @@ $ pig -x local -f pregunta.pig
 
         >>> Escriba su respuesta a partir de este punto <<<
 */
+data = LOAD 'data.tsv' AS (
+        letter:chararray, 
+        tupla_:BAG{A:tuple(B:chararray)}, 
+        dic_:map[]
+    );
+counter = FOREACH data GENERATE letter, COUNT(tupla_.B) AS bag_r, SIZE(dic_) as map_r;
+order_by = ORDER counter BY letter ASC,bag_r ASC,map_r ASC;
+STORE order_by INTO 'output' USING PigStorage(',');
