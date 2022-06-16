@@ -29,5 +29,5 @@ data = LOAD 'data.csv' USING PigStorage(',') AS (
         num2:int
     );
 sel = FOREACH data GENERATE name, color;
-Filtro = FILTER sel BY NOT color == 'blue' OR color == 'black';
+Filtro = FILTER sel BY NOT color IN ('blue', 'black');
 STORE Filtro INTO 'output' USING PigStorage(',');
