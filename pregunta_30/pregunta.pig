@@ -41,6 +41,18 @@ data = LOAD 'data.csv' USING PigStorage(',') AS (
         color: chararray,
         num2:int
     );
-Date = FOREACH data GENERATE ToDate(date,'yyyy-MM-dd') as DATE;
-str = FOREACH Date GENERATE ToString(DATE, 'yyyy-MM-dd'), LOWER(ToString(DATE, 'MMM')), ToString(DATE, 'MM'),ToString(DATE, 'M');
-STORE str INTO 'output' USING PigStorage(',');  
+
+read = FOREACH data GENERATE ToDate(date,'yyyy-MM-dd') as DATE;
+data = FOREACH read GENERATE ToString(DATE, 'yyyy-MM-dd') as toda,                              
+                              ToString(DATE, 'dd') as day, 
+                              ToString(DATE, 'd') as nday,
+                              LOWER(ToString(DATE, 'EEEE')) as dia,
+                              LOWER(ToString(DATE, 'E')) as d;
+data = FOREACH data GENERATE toda, day, nday, REPLACE(d,'thu','jue') AS d, REPLACE(dia,'thursday','jueves') AS dia;
+data = FOREACH data GENERATE toda, day, nday, REPLACE(d,'sun','dom') AS d, REPLACE(dia,'sunday','domingo') AS dia;
+data = FOREACH data GENERATE toda, day, nday, REPLACE(d,'fri','vie') AS d, REPLACE(dia,'friday','viernes') AS dia;
+data = FOREACH data GENERATE toda, day, nday, REPLACE(d,'mon','lun') AS d, REPLACE(dia,'monday','lunes') AS dia;
+data = FOREACH data GENERATE toda, day, nday, REPLACE(d,'tue','mar') AS d, REPLACE(dia,'tuesday','martes') AS dia;
+data = FOREACH data GENERATE toda, day, nday, REPLACE(d,'wed','mie') AS d, REPLACE(dia,'wednesday','miercoles') AS dia;
+STORE data INTO 'output' USING PigStorage(',');  
+
