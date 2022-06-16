@@ -41,6 +41,13 @@ data = LOAD 'data.csv' USING PigStorage(',') AS (
         color: chararray,
         num2:int
     );
-Date = FOREACH data GENERATE ToDate(date,'yyyy-MM-dd') as DATE;
-str = FOREACH Date GENERATE ToString(DATE, 'yyyy-MM-dd'), LOWER(ToString(DATE, 'MMM')), ToString(DATE, 'MM'),ToString(DATE, 'M');
+
+DATE = FOREACH data GENERATE date as fechas;
+To_date = FOREACH DATE GENERATE ToDate(fechas,'yyyy-MM-dd') as (DT: DateTime);
+str = FOREACH To_date GENERATE ToString(DT, 'yyyy-MM-dd') as (completa:chararray), ToString(DT, 'MMM') as (nombremes:chararray),ToString(DT, 'MM') as (mes:chararray), ToString(DT, 'M') as (messolo:chararray);
+data = FOREACH str GENERATE completa, REPLACE(nombremes,'Jan','ene') AS nombremes, mes, messolo;
+data = FOREACH str GENERATE completa, REPLACE(nombremes,'Apr','abr') AS nombremes, mes, messolo;
+data = FOREACH str GENERATE completa, REPLACE(nombremes,'Aug','ago') AS nombremes, mes, messolo;
+data = FOREACH str GENERATE completa, REPLACE(nombremes,'Dec','dic') AS nombremes, mes, messolo;
+data = FOREACH str GENERATE completa, LOWER(nombremes), mes, messolo;
 STORE str INTO 'output' USING PigStorage(',');  
