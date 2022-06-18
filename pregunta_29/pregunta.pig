@@ -42,12 +42,10 @@ data = LOAD 'data.csv' USING PigStorage(',') AS (
         num2:int
     );
 
-DATE = FOREACH data GENERATE date as fechas;
-To_date = FOREACH DATE GENERATE ToDate(fechas,'yyyy-MM-dd') as (DT: DateTime);
-str = FOREACH To_date GENERATE ToString(DT, 'yyyy-MM-dd') as (completa:chararray), ToString(DT, 'MMM') as (nombremes:chararray),ToString(DT, 'MM') as (mes:chararray), ToString(DT, 'M') as (messolo:chararray);
-data = FOREACH str GENERATE completa, REPLACE(nombremes,'Jan','ene') AS nombremes, mes, messolo;
-data = FOREACH str GENERATE completa, REPLACE(nombremes,'Apr','abr') AS nombremes, mes, messolo;
-data = FOREACH str GENERATE completa, REPLACE(nombremes,'Aug','ago') AS nombremes, mes, messolo;
-data = FOREACH str GENERATE completa, REPLACE(nombremes,'Dec','dic') AS nombremes, mes, messolo;
-data = FOREACH str GENERATE completa, LOWER(nombremes), mes, messolo;
-STORE str INTO 'output' USING PigStorage(',');  
+To_date = FOREACH data GENERATE ToDate(date,'yyyy-MM-dd') as DT;
+str = FOREACH To_date GENERATE ToString(DT, 'yyyy-MM-dd') as completa, LOWER(ToString(DT, 'MMM')) as nombremes, ToString(DT, 'MM') as mes, ToString(DT, 'M') as messolo;
+rpc = FOREACH str GENERATE completa, REPLACE(nombremes,'jan','ene') AS nombremes, mes, messolo;
+rpc = FOREACH rpc GENERATE completa, REPLACE(nombremes,'apr','abr') AS nombremes, mes, messolo;
+rpc = FOREACH rpc GENERATE completa, REPLACE(nombremes,'aug','ago') AS nombremes, mes, messolo;
+rpc = FOREACH rpc GENERATE completa, REPLACE(nombremes,'dec','dic') AS nombremes, mes, messolo;
+STORE rpc INTO 'output' USING PigStorage(',');  
